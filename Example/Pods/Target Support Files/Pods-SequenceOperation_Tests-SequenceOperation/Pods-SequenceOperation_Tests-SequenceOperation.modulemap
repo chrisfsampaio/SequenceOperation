@@ -1,0 +1,6 @@
+framework module SequenceOperation {
+  umbrella header "Pods-SequenceOperation_Tests-SequenceOperation-umbrella.h"
+
+  export *
+  module * { export * }
+}

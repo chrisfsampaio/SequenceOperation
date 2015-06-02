@@ -1,0 +1,5 @@
+#import <Foundation/Foundation.h>
+@interface PodsDummy_Pods_SequenceOperation_Example_SequenceOperation : NSObject
+@end
+@implementation PodsDummy_Pods_SequenceOperation_Example_SequenceOperation
+@end
