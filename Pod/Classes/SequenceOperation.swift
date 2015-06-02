@@ -3,6 +3,7 @@ public class SequenceOperation: NSOperation {
     
     let semaphore: dispatch_semaphore_t
     let work: (SequenceOperation) -> Void
+    public var movedOnBlock: (() -> Void)? = nil
     
     public init(block: (SequenceOperation) -> Void) {
         semaphore = dispatch_semaphore_create(0)
@@ -27,10 +28,13 @@ public class SequenceOperation: NSOperation {
         if !cancelled {
             work(self)
             dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+        } else {
+            movedOnBlock?()
         }
     }
     
     public func moveOn() {
+        movedOnBlock?()
         dispatch_semaphore_signal(semaphore)
     }
     

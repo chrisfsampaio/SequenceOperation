@@ -108,6 +108,12 @@ class SequenceOperationTests: XCTestCase {
             operation.moveOn()
         }
         
+        thirdOperation.movedOnBlock = {
+            expect(ranFirstOperation).to(beTruthy())
+            expect(ranSecondOperation).to(beTruthy())
+            expect(ranThirdOperation).to(beFalsy())
+        }
+        
         firstOperation --> secondOperation --> thirdOperation
         
         runOperations([secondOperation, firstOperation, thirdOperation], asynchronously: false)
