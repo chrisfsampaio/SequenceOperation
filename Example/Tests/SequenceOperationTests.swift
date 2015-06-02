@@ -20,7 +20,7 @@ class SequenceOperationTests: XCTestCase {
         
         let firstOperation = SequenceOperation { operation in
             ranFirstOperation = true
-            sleep(1)
+            sleep(1) //menezes
             operation.moveOn()
         }
         
@@ -41,7 +41,7 @@ class SequenceOperationTests: XCTestCase {
         var ranSecondOperation = false
         
         let firstOperation = SequenceOperation { operation in
-            sleep(1)
+            sleep(1) //menezes
             ranFirstOperation = true
             operation.moveOn()
         }
@@ -66,7 +66,7 @@ class SequenceOperationTests: XCTestCase {
         var ranSecondOperation = false
         
         let firstOperation = SequenceOperation { operation in
-            sleep(1)
+            sleep(1) //menezes
             ranFirstOperation = true
             operation.moveOn()
         }
@@ -90,13 +90,13 @@ class SequenceOperationTests: XCTestCase {
         var ranThirdOperation = false
         
         let firstOperation = SequenceOperation { operation in
-            sleep(1)
+            sleep(1) //menezes
             ranFirstOperation = true
             operation.moveOn()
         }
         
         let secondOperation = SequenceOperation { operation in
-            sleep(1)
+            sleep(1) //menezes
             expect(ranFirstOperation).to(beTruthy())
             ranSecondOperation = true
             operation.cancel()

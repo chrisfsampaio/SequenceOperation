@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>EBCA8293-F3B8-4BB3-916C-0D1AD2FD4CBC</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SequenceOperation</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>404E34A82BEFB3EACBF9A224ED0C8EE7F0FEDE4C</key>
+		<string>github.com-personal:chrisfsampaio/SequenceOperation.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Example/SequenceOperation.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>404E34A82BEFB3EACBF9A224ED0C8EE7F0FEDE4C</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com-personal:chrisfsampaio/SequenceOperation.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>404E34A82BEFB3EACBF9A224ED0C8EE7F0FEDE4C</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>404E34A82BEFB3EACBF9A224ED0C8EE7F0FEDE4C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>sequence-operation</string>
+		</dict>
+	</array>
+</dict>
+</plist>

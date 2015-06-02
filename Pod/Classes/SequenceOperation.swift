@@ -28,8 +28,6 @@ public class SequenceOperation: NSOperation {
         if !cancelled {
             work(self)
             dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
-        } else {
-            movedOnBlock?()
         }
     }
     
