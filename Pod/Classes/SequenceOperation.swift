@@ -3,7 +3,10 @@ public class SequenceOperation: NSOperation {
     
     let semaphore: dispatch_semaphore_t
     let work: (SequenceOperation) -> Void
-    public var movedOnBlock: (() -> Void)? = nil
+    public var movedOnBlock: ((Bool, NSOperation?, NSError?) -> Void)? = nil
+    
+    typealias CancelOperation = (operation: NSOperation, error: NSError?)
+    private var cancelledOperation: CancelOperation? = nil
     
     public init(block: (SequenceOperation) -> Void) {
         semaphore = dispatch_semaphore_create(0)
@@ -14,6 +17,7 @@ public class SequenceOperation: NSOperation {
         
         assert(NSThread.currentThread().isMainThread == false, "Sequence does not play well on the main thread, you should instantiate a NSOperationQueue so that things can work out.")
         
+        
         let previousOperations = dependencies.map() { $0 as! NSOperation }
         let previouslyCancelled = previousOperations.reduce(false) { before, operation in
             let cancel = before || operation.cancelled
@@ -22,7 +26,10 @@ public class SequenceOperation: NSOperation {
         }
         
         if previouslyCancelled {
-            cancel()
+            if let previousOperation = previousCancelledOperation() {
+                cancelledOperation = previousOperation
+            }
+            cancelSilently()
         }
         
         if !cancelled {
@@ -32,13 +39,40 @@ public class SequenceOperation: NSOperation {
     }
     
     public func moveOn() {
-        movedOnBlock?()
+        moveOn(true)
+    }
+    
+    private func moveOn(finished: Bool) {
+        
+        //arvore não atinge mais de um nível, passar cancelledOperation de um nível para outro ao propagar cancelamento
+        let cancelOperation = previousCancelledOperation()
+        
+        movedOnBlock?(finished, cancelOperation?.operation, cancelOperation?.error)
         dispatch_semaphore_signal(semaphore)
+    }
+    
+    private func previousCancelledOperation() -> CancelOperation? {
+        let previousOperations = dependencies.filter() { $0 is SequenceOperation } as! [SequenceOperation]
+        let cancelOperation = previousOperations.filter() { $0.cancelledOperation != nil }.first?.cancelledOperation
+        
+        return cancelOperation
     }
     
     public override func cancel() {
         super.cancel()
-        moveOn()
+        cancelledOperation = (operation: self, error: nil)
+        moveOn(false)
+    }
+    
+    private func cancelSilently() {
+        super.cancel()
+        moveOn(false)
+    }
+    
+    public func cancel(error: NSError?) {
+        super.cancel()
+        cancelledOperation = (operation: self, error: error)
+        moveOn(false)
     }
     
     public func chainAfter(#operation: NSOperation) -> Self {
