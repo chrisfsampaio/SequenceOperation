@@ -1,8 +1,8 @@
 
 public class SequenceOperation: NSOperation {
     
-    let semaphore: dispatch_semaphore_t
-    let work: (SequenceOperation) -> Void
+    internal let semaphore: dispatch_semaphore_t
+    internal let work: (SequenceOperation) -> Void
     public var movedOnBlock: ((Bool, NSOperation?, NSError?) -> Void)? = nil
     
     typealias CancelOperation = (operation: NSOperation, error: NSError?)
@@ -17,9 +17,7 @@ public class SequenceOperation: NSOperation {
         
         assert(NSThread.currentThread().isMainThread == false, "Sequence does not play well on the main thread, you should instantiate a NSOperationQueue so that things can work out.")
         
-        
-        let previousOperations = dependencies.map() { $0 as! NSOperation }
-        let previouslyCancelled = previousOperations.reduce(false) { before, operation in
+        let previouslyCancelled = dependencies.reduce(false) { before, operation in
             let cancel = before || operation.cancelled
             
             return cancel
@@ -75,7 +73,7 @@ public class SequenceOperation: NSOperation {
         moveOn(false)
     }
     
-    public func chainAfter(#operation: NSOperation) -> Self {
+    public func chainAfter(operation operation: NSOperation) -> Self {
         addDependency(operation)
         
         return self

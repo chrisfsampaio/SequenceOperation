@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F86628142744FA0126BF293B"
+               BlueprintIdentifier = "1EF5475D06B320CB26F2687A"
                BuildableName = "Pods_SequenceOperation_Example.framework"
                BlueprintName = "Pods-SequenceOperation_Example"
                ReferencedContainer = "container:Pods.xcodeproj">

@@ -9,5 +9,5 @@ target 'SequenceOperation_Tests', :exclusive => true do
   pod "SequenceOperation", :path => "../"
 
   pod 'Quick'
-  pod 'Nimble'
+  pod 'Nimble', :head
 end
