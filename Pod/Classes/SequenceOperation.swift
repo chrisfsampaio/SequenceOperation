@@ -1,11 +1,17 @@
 
-public class SequenceOperation: NSOperation {
+public enum SequenceResult {
+    case Success
+    case Error(NSOperation, ErrorType?)
+}
+
+
+public final class SequenceOperation: NSOperation {
     
     internal let semaphore: dispatch_semaphore_t
     internal let work: (SequenceOperation) -> Void
-    public var movedOnBlock: ((Bool, NSOperation?, NSError?) -> Void)? = nil
+    public var movedOnBlock: (SequenceResult -> Void)? = nil
     
-    typealias CancelOperation = (operation: NSOperation, error: NSError?)
+    typealias CancelOperation = (operation: NSOperation, error: ErrorType?)
     private var cancelledOperation: CancelOperation? = nil
     
     public init(block: (SequenceOperation) -> Void) {
@@ -42,15 +48,16 @@ public class SequenceOperation: NSOperation {
     
     private func moveOn(finished: Bool) {
         
-        //arvore não atinge mais de um nível, passar cancelledOperation de um nível para outro ao propagar cancelamento
         let cancelOperation = previousCancelledOperation()
+        let result = finished ? SequenceResult.Success : SequenceResult.Error(cancelOperation!.operation, cancelOperation?.error)
         
-        movedOnBlock?(finished, cancelOperation?.operation, cancelOperation?.error)
+        movedOnBlock?(result)
         dispatch_semaphore_signal(semaphore)
     }
     
     private func previousCancelledOperation() -> CancelOperation? {
-        let previousOperations = dependencies.filter() { $0 is SequenceOperation } as! [SequenceOperation]
+        var previousOperations = dependencies.filter() { $0 is SequenceOperation } as! [SequenceOperation]
+        previousOperations.append(self)
         let cancelOperation = previousOperations.filter() { $0.cancelledOperation != nil }.first?.cancelledOperation
         
         return cancelOperation

@@ -101,12 +101,15 @@ class SequenceOperationTests: XCTestCase {
             operation.moveOn()
         }
         
-        secondOperation.movedOnBlock = { finished, operation, error in
-            expect(finished).to(beTruthy())
-            expect(operation).to(beNil())
-            expect(error).to(beNil())
-            expect(ranFirstOperation).to(beTruthy())
-            expect(ranSecondOperation).to(beTruthy())
+        secondOperation.movedOnBlock = { result in
+            
+            if case .Success = result {
+                expect(ranFirstOperation).to(beTruthy())
+                expect(ranSecondOperation).to(beTruthy())
+            } else {
+                fail()
+            }
+
         }
         
         firstOperation --> secondOperation
@@ -140,10 +143,16 @@ class SequenceOperationTests: XCTestCase {
             }
         }
         secondOperation.name = "B"
-        secondOperation.movedOnBlock = { finished, operation, error in
-            expect(finished).to(beFalsy())
-            expect(operation).to(beIdenticalTo(firstOperation))
-            expect(error).to(beIdenticalTo(expectedError))
+        secondOperation.movedOnBlock = { result in
+            
+            if case let .Error(operation, error) = result {
+                expect(operation).to(beIdenticalTo(firstOperation))
+                expect(error).toNot(beNil())
+                expect(error! as NSError).to(beIdenticalTo(expectedError))
+            } else {
+                fail()
+            }
+            
             expect(ranFirstOperation).to(beTruthy())
             expect(ranSecondOperation).to(beFalsy())
             expect(ranThirdOperation).to(beFalsy())
@@ -155,10 +164,16 @@ class SequenceOperationTests: XCTestCase {
             operation.moveOn()
         }
         
-        thirdOperation.movedOnBlock = { finished, operation, error in
-            expect(finished).to(beFalsy())
-            expect(operation).to(beIdenticalTo(firstOperation))
-            expect(error).to(beIdenticalTo(expectedError))
+        thirdOperation.movedOnBlock = { result in
+            
+            if case let .Error(operation, error) = result {
+                expect(operation).to(beIdenticalTo(firstOperation))
+                expect(error).toNot(beNil())
+                expect(error! as NSError).to(beIdenticalTo(expectedError))
+            } else {
+                fail()
+            }
+            
             expect(ranFirstOperation).to(beTruthy())
             expect(ranSecondOperation).to(beFalsy())
             expect(ranThirdOperation).to(beFalsy())
@@ -172,6 +187,50 @@ class SequenceOperationTests: XCTestCase {
         expect(ranFirstOperation).to(beTruthy())
         expect(ranSecondOperation).to(beFalsy())
         expect(ranThirdOperation).to(beFalsy())
+    }
+    
+    func testCancelWithoutError() {
+        
+        var ranFirstOperation = false
+        var ranSecondOperation = false
+        
+        
+        let firstOperation = SequenceOperation { operation in
+            after(1) {
+                ranFirstOperation = true
+                operation.cancel()
+            }
+        }
+        firstOperation.name = "A"
+        
+        let secondOperation = SequenceOperation { operation in
+            expect(ranFirstOperation).to(beTruthy())
+            
+            after(1) {
+                ranSecondOperation = true
+                operation.moveOn()
+            }
+        }
+        secondOperation.name = "B"
+        secondOperation.movedOnBlock = { result in
+            
+            if case let .Error(operation, error) = result {
+                expect(operation).to(beIdenticalTo(firstOperation))
+                expect(error).to(beNil())
+            } else {
+                fail()
+            }
+            expect(ranFirstOperation).to(beTruthy())
+            expect(ranSecondOperation).to(beFalsy())
+        }
+        
+        firstOperation --> secondOperation
+        
+        runOperations([secondOperation, firstOperation], asynchronously: false)
+        
+        expect(ranFirstOperation).to(beTruthy())
+        expect(ranSecondOperation).to(beFalsy())
+        
     }
 
 }
