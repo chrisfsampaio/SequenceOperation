@@ -1,7 +1,7 @@
 
 public enum SequenceResult {
     case Success
-    case Error(NSOperation, ErrorType?)
+    case Error(NSOperation, NSError?)
 }
 
 
@@ -11,7 +11,7 @@ public final class SequenceOperation: NSOperation {
     internal let work: (SequenceOperation) -> Void
     public var movedOnBlock: (SequenceResult -> Void)? = nil
     
-    typealias CancelOperation = (operation: NSOperation, error: ErrorType?)
+    typealias CancelOperation = (operation: NSOperation, error: NSError?)
     private var cancelledOperation: CancelOperation? = nil
     
     public init(block: (SequenceOperation) -> Void) {
@@ -23,7 +23,8 @@ public final class SequenceOperation: NSOperation {
         
         assert(NSThread.currentThread().isMainThread == false, "Sequence does not play well on the main thread, you should instantiate a NSOperationQueue so that things can work out.")
         
-        let previouslyCancelled = dependencies.reduce(false) { before, operation in
+        let previousOperations = dependencies as! [NSOperation]
+        let previouslyCancelled = previousOperations.reduce(false) { before, operation in
             let cancel = before || operation.cancelled
             
             return cancel
