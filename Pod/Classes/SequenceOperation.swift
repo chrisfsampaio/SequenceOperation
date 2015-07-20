@@ -81,7 +81,7 @@ public final class SequenceOperation: NSOperation {
         moveOn(false)
     }
     
-    public func chainAfter(operation operation: NSOperation) -> Self {
+    public func chainAfter(operation: NSOperation) -> Self {
         addDependency(operation)
         
         return self
@@ -92,7 +92,7 @@ public final class SequenceOperation: NSOperation {
 infix operator --> { associativity left precedence 140 }
 
 public func --> (left: SequenceOperation, right: SequenceOperation) -> SequenceOperation {
-    return right.chainAfter(operation: left)
+    return right.chainAfter(left)
 }
 
 public func runOperations(operations: [NSOperation], asynchronously: Bool = true) -> NSOperationQueue {
